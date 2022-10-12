@@ -1,0 +1,39 @@
+<div class="bg-gray-700 p-4 rounded-lg shadow-md" style="height: 200px;">
+  <div class="flex pb-2 justify-between items-center">
+    <h4 class="uppercase font-semibold"><%= @title %></h4> <span class="text-xs uppercase"><%= get_stat(@stat) %></span>
+  </div>
+
+  <div class="flex text-white h-full gap-2">
+    <div class="flex items-center w-1/4" style="margin-top: -2rem;">
+        <%= case @mode do %>
+      <% "channel" -> %>
+        <object class="object-contain w-24 h-24" data={get_icon(@value)} type="image/png">
+          <img class="object-contain w-24 h-24" alt="Missing icon" src={"/images/missing.png"} />
+        </object>
+      <% "user" -> %>
+        <div class="flex border border-2 w-16 h-16 align-middle rounded-full bg-green-500 items-center justify-center text-xl">
+          <span class="inline-block m-0 p-0 align-[4px]"><%= get_user_initial(@value) %></span>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex w-full">
+      <ul class="w-full">
+      <%= for {x, idx} <- Enum.with_index(@value) do %>
+        <li class="flex w-full justify-between">
+          <div>
+            <span class="text-xs"><%= idx + 1 %></span>
+            <%= x[@mode] %>
+          </div>
+          <div>
+            <%= if @stat == "duration" do %>
+              <%= parse_duration(x["duration"]) %>
+            <% else %>
+              <%= x[get_stat(@stat)] %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
