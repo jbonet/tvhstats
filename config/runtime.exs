@@ -7,6 +7,19 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+config :tvhstats,
+  cache_icons: System.get_env("TVHSTATS_ICON_CACHE_ENABLED", "1") == "1",
+  icon_cache_dir: System.get_env("TVHSTATS_ICON_CACHE_FOLDER", "/app/priv/static/assets/icons"),
+  poll_interval: "TVHSTATS_POLL_INTERVAL" |> System.get_env("1000") |> String.to_integer(),
+  channel_surf_threshold:
+    "TVHSTATS_CHANNEL_SURF_THRESHOLD" |> System.get_env("10000") |> String.to_integer(),
+  tvh_host: System.get_env("TVHSTATS_TVHEADEND_HOST", "localhost"),
+  tvh_port: "TVHSTATS_TVHEADEND_PORT" |> System.get_env("9981") |> String.to_integer(),
+  tvh_user: System.get_env("TVHSTATS_TVHEADEND_USER"),
+  tvh_password: System.get_env("TVHSTATS_TVHEADEND_PASSWORD"),
+  tvh_use_https: System.get_env("TVHSTATS_TVHEADEND_USE_HTTPS", "0") == "1",
+  tvh_tz: System.get_env("TVHSTATS_TIMEZONE", "Etc/UTC")
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server

@@ -26,7 +26,7 @@ Create an `.env` file to override the default config, read `.env.sample` to know
 At the moment there is no public image available, build it running:
 
 ```bash
-docker compose up -d
+docker-compose up -d
 ```
 
 ### Bare-metal

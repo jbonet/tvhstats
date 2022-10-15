@@ -9,7 +9,7 @@ defmodule TVHStats.Worker.Producer do
 
   alias TVHStats.API.Client
 
-  def start_link(opts) do
+  def start_link(_opts) do
     GenStage.start_link(__MODULE__, 0, name: __MODULE__)
   end
 
