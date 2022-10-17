@@ -10,32 +10,46 @@ defmodule TVHStats.API.Client do
   @page_size 100
 
   def get_streams() do
-    req = build_request("/status/subscriptions")
+    res =
+      "/status/subscriptions"
+      |> build_request()
+      |> send_request()
 
-    {:ok, %Finch.Response{body: response, status: 200}} = Finch.request(req, HttpClient)
+    case res do
+      {:ok, response} ->
+        %{"entries" => subscriptions, "totalCount" => count} = response
 
-    %{"entries" => subscriptions, "totalCount" => count} = Jason.decode!(response)
+        %{
+          "entries" =>
+            subscriptions
+            |> Enum.map(&parse_subscription(&1))
+            |> Enum.sort_by(& &1["start"]),
+          "totalCount" => count
+        }
 
-    %{
-      "entries" =>
-        subscriptions
-        |> Enum.map(&parse_subscription(&1))
-        |> Enum.sort_by(& &1["start"]),
-      "totalCount" => count
-    }
+      {:error, _reason} ->
+        %{"entries" => [], "totalCount" => 0}
+    end
   end
 
   def get_channels(channels \\ [], page \\ 0, processed \\ 0) do
-    req = build_request("/channel/grid", %{start: page * @page_size, limit: @page_size})
+    res =
+      "/channel/grid"
+      |> build_request(%{start: page * @page_size, limit: @page_size})
+      |> send_request()
 
-    {:ok, %Finch.Response{body: response, status: 200}} = Finch.request(req, HttpClient)
+    case res do
+      {:ok, response} ->
+        %{"entries" => recv_channels, "total" => _total} = response
 
-    %{"entries" => recv_channels, "total" => _total} = Jason.decode!(response)
+        if length(recv_channels) > 0 do
+          get_channels(channels ++ recv_channels, page + 1, processed + length(channels))
+        else
+          channels
+        end
 
-    if length(recv_channels) > 0 do
-      get_channels(channels ++ recv_channels, page + 1, processed + length(channels))
-    else
-      channels
+      {:error, _reason} ->
+        []
     end
   end
 
@@ -54,6 +68,33 @@ defmodule TVHStats.API.Client do
 
   defp build_request(endpoint, query_params \\ nil) do
     Finch.build(:get, "#{url()}#{endpoint}#{params(query_params)}", headers())
+  end
+
+  defp send_request(request) do
+    case Finch.request(request, HttpClient) do
+      {:ok, %Finch.Response{body: body, status: 200}} ->
+        {:ok, Jason.decode!(body)}
+
+      {:ok, %Finch.Response{status: 400}} ->
+        Logger.error("Bad request. Malformed query.")
+        {:error, :bad_request}
+
+      {:ok, %Finch.Response{status: 401}} ->
+        Logger.error("Request was not authorized. Please check your credentials.")
+        {:error, :not_authenticated}
+
+      {:ok, %Finch.Response{status: 500}} ->
+        Logger.error("There was an error processing the request. Check your server for logs.")
+        {:error, :server_error}
+
+      {:ok, %Finch.Response{status: _status}} ->
+        Logger.error("There was an unknown error processing the request.")
+        {:error, :unknown_error}
+
+      {:error, %Mint.TransportError{reason: reason}} ->
+        Logger.error("There was an error sending the request: #{reason}")
+        {:error, reason}
+    end
   end
 
   defp url() do
