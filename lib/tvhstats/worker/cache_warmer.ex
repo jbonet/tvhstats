@@ -26,7 +26,7 @@ defmodule TVHStats.Worker.CacheWarmer do
     Logger.info("[CacheWarmer] Finished warming up icons.")
   end
 
-  defp store_in_cache(%{"icon" => icon, "name" => channel}, icons_folder) do
+  defp store_in_cache(%{"icon" => "http" <> _ = icon, "name" => channel}, icons_folder) do
     req = Finch.build(:get, icon)
 
     file_ext =
@@ -48,5 +48,13 @@ defmodule TVHStats.Worker.CacheWarmer do
           Logger.error("[CacheWarmer] Could not get icon for: #{channel}")
       end
     end
+  end
+
+  defp store_in_cache(%{"icon" => "picon" <> _, "name" => channel}, _) do
+    Logger.warning("[CacheWarmer] Icon for channel #{channel} can not be downloaded. Picon protocol not supported yet.")
+  end
+
+  defp store_in_cache(%{"icon" => icon, "name" => channel}, _) do
+    Logger.warning("[CacheWarmer] Icon for channel #{channel} can not be downloaded. Unknown format for link: #{icon}")
   end
 end
