@@ -35,10 +35,7 @@ jobs:
           images: |
             cr.jbonet.xyz/jbonet/tvhstats
           tags: |
-            if ${{ matrix.flavor }} -eq debian
-            then
-              latest
-            fi
+            type=raw,value=latest,enable=${{ matrix.flavor == 'debian' }}
             ${{ matrix.flavor }}
 
       - name: Build and push
