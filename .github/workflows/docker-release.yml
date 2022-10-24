@@ -29,24 +29,16 @@ jobs:
           password: ${{ secrets.HARBOR_TOKEN }}
 
       - name: Docker meta
-        if: matrix.flavor == 'debian'
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
             cr.jbonet.xyz/jbonet/tvhstats
           tags: |
-            latest
-            ${{ matrix.flavor }}
-
-      - name: Docker meta
-        if: matrix.flavor != 'debian'
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            cr.jbonet.xyz/jbonet/tvhstats
-          tags: |
+            if ${{ matrix.flavor }} -eq debian
+            then
+              latest
+            fi
             ${{ matrix.flavor }}
 
       - name: Build and push
