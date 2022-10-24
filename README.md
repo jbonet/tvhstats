@@ -56,7 +56,6 @@ services:
       # Optional parameters, these are the default values.
       - TVHSTATS_POLL_INTERVAL=1000 # optional
       - TVHSTATS_ICON_CACHE_ENABLED=1 # optional
-      - TVHSTATS_ICON_CACHE_FOLDER=/app/icons # optional
       - TVHSTATS_CHANNEL_SURF_THRESHOLD=10000 # optional
       - TVHSTATS_TIMEZONE=Etc/UTC
     ports:
@@ -83,20 +82,20 @@ At the moment, there are no releases, so you will need to compile the code and r
 
 Later on I will provide binaries for those who don't want to use docker version.
 
-### Dependencies
-
-- PostgreSQL
-- Erlang
-- Elixir
-
-For using it without docker, you will need to have installed Erlang and Elixir, then you can start the app running these commands.
+If you know what you are doing, you will need to have installed Erlang and Elixir, then you can start the app running:
 
 ```bash
 mix deps.get
 mix phx.server
 ```
 
-You will need to set up the environment variables or edit `config/config.exs` and set your own values.
+You will need to set up the environment variables or edit `config/runtime.exs` and set your own values.
+
+### Dependencies
+
+- PostgreSQL
+- Erlang
+- Elixir
 
 ## License
 
