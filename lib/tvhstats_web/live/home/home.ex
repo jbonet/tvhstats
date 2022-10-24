@@ -88,6 +88,24 @@ defmodule TVHStatsWeb.HomeLive.Home do
     |> Map.put("runtime", parse_runtime(start))
   end
 
+  defp parse_subscription(
+         %{
+           "start" => start,
+           "channel" => _channel,
+           "in" => bytes_in,
+           "total_in" => total_bytes_in,
+           "hostname" => ip
+         } = subscription,
+         timezone
+       ) do
+    subscription
+    |> Map.put("in", parse_bandwidth(bytes_in))
+    |> Map.put("total_in", parse_transfer(total_bytes_in))
+    |> Map.put("started_at", parse_timestamp(start, timezone))
+    |> Map.put("runtime", parse_runtime(start))
+    |> Map.put("username", "anonymous@" <> ip)
+  end
+
   defp parse_bandwidth(bits) do
     Sizeable.filesize(bits, bits: true)
   end
