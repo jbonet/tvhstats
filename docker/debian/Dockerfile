@@ -1,17 +1,3 @@
-# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian instead of
-# Alpine to avoid DNS resolution issues in production.
-#
-# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=ubuntu
-# https://hub.docker.com/_/ubuntu?tab=tags
-#
-#
-# This file is based on these images:
-#
-#   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20210902-slim - for the release image
-#   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.13.0-erlang-25.0.2-debian-bullseye-20210902-slim
-#
 ARG ELIXIR_VERSION=1.14.1
 ARG OTP_VERSION=25.1.1
 ARG DEBIAN_VERSION=bullseye-20220801
@@ -70,6 +56,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
+# RUN apk add --no-cache libstdc++ openssl ncurses-libs
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
@@ -91,8 +78,6 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/tvhstats ./
 
 USER nobody
 
-#ENTRYPOINT ["/app/bin/tvhstats"]
+EXPOSE 80
 
-RUN ls -l /app/bin
-
-CMD ["/app/bin/server"]
+CMD ["sh", "-c", "bin/migrate && exec bin/server"]

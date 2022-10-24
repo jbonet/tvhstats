@@ -21,17 +21,57 @@ An elixir based web application for monitoring and analytics for [tvheadend](htt
 
 ### Docker
 
-Create an `.env` file to override the default config, read `.env.sample` to know which variables are available.
-
-At the moment there is no public image available, build it running:
-
 ```bash
-docker-compose up -d
+docker run -p 80:80 -e DATABASE_URL=ecto://db_user:db_password@db_host/db -e SECRET_KEY_BASE=secret_string_REPLACE_ME cr.jbonet.xyz/jbonet/tvhstats
 ```
+
+### Docker compose
+
+```yaml
+version: '3.8'
+services:
+  tvhstats:
+    image: cr.jbonet.xyz/jbonet/tvhstats
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=ecto://postgres:postgres@db/tvhstats
+      - TVHSTATS_TVHEADEND_HOST=example.com
+      - TVHSTATS_TVHEADEND_PORT=443
+      - TVHSTATS_TVHEADEND_USE_HTTPS=1
+      - TVHSTATS_TVHEADEND_USER=tvheadend_user
+      - TVHSTATS_TVHEADEND_PASSWORD=tvheadend_password
+      # Please set a secure string
+      - SECRET_KEY_BASE=secret_string_REPLACE_ME
+      # Optional parameters, these are the default values.
+      - TVHSTATS_POLL_INTERVAL=1000 # optional
+      - TVHSTATS_ICON_CACHE_ENABLED=1 # optional
+      - TVHSTATS_ICON_CACHE_FOLDER=/icons # optional
+      - TVHSTATS_CHANNEL_SURF_THRESHOLD=10000 # optional
+
+    ports:
+      - "80:80"
+  
+  # Database does not need to be run from docker, added for convenience.
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tvhstats
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+```
+
+An explanation of each environment variable can be found in the `.env.sample` file.
 
 ### Bare-metal
 
 At the moment, there are no releases, so you will need to compile the code and run the development version.
+
+Later on I will provide binaries for those who don't want to use docker version.
 
 ### Dependencies
 
