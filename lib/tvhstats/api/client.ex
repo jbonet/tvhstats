@@ -92,7 +92,7 @@ defmodule TVHStats.API.Client do
         {:error, :unknown_error}
 
       {:error, %Mint.TransportError{reason: reason}} ->
-        Logger.error("There was an error sending the request: #{reason}")
+        Logger.error("There was an error sending the request: #{reason}. Please check you set your server correctly.")
         {:error, reason}
     end
   end

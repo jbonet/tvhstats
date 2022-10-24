@@ -13,9 +13,9 @@ services:
       - db
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/dev/Dockerfile
     command: elixir --sname tvhstats --cookie tvhstats -S mix phx.server
-    entrypoint: ["./docker/entrypoint.sh"]
+    entrypoint: ["./docker/dev/entrypoint.sh"]
     environment:
       MIX_ENV: dev
     env_file:

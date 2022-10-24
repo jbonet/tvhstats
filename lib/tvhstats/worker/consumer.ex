@@ -94,12 +94,12 @@ defmodule TVHStats.Worker.Consumer do
   def handle_stopped_subscriptions(stopped_subscriptions) do
     now = DateTime.utc_now()
 
-    Enum.each(stopped_subscriptions, &handle_stopped_subscription(&1))
 
-    to_stop =
-      stopped_subscriptions
-      |> Enum.map(&transform(&1))
-      |> Enum.filter(&is_active_watching(&1[:started_at], now))
+    transformed_stopped_subscriptions = Enum.map(stopped_subscriptions, &transform(&1))
+
+    Enum.each(transformed_stopped_subscriptions, &handle_stopped_subscription(&1))
+
+    to_stop = Enum.filter(transformed_stopped_subscriptions, &is_active_watching(&1[:started_at], now))
 
     Subscriptions.stop_all(to_stop)
 
@@ -119,7 +119,7 @@ defmodule TVHStats.Worker.Consumer do
   end
 
   defp handle_stopped_subscription(subscription) do
-    Logger.debug("User #{subscription["username"]} stopped watching: #{subscription["channel"]}")
+    Logger.debug("User #{subscription[:user]} stopped watching: #{subscription[:channel]}")
   end
 
   defp transform(%{
@@ -141,6 +141,26 @@ defmodule TVHStats.Worker.Consumer do
       client: client
     }
   end
+
+    defp transform(%{
+         "hostname" => ip,
+         "start" => start,
+         "hash" => hash,
+         "channel" => channel,
+         "stream_type" => stream_type,
+         "client" => client
+       }) do
+    %{
+      hash: hash,
+      user: "anonymous@" <> ip,
+      channel: channel,
+      ip: ip,
+      started_at: DateTime.from_unix!(start),
+      stream_type: stream_type,
+      client: client
+    }
+  end
+
 
   def is_active_watching(start, now) do
     DateTime.diff(now, start, :millisecond) >
