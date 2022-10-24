@@ -19,6 +19,8 @@ An elixir based web application for monitoring and analytics for [tvheadend](htt
 
 ## Installation
 
+You must pass a SECRET_KEY_BASE environment variable of at least 64 characters long.
+
 ### Docker
 
 ```bash
@@ -27,11 +29,19 @@ docker run -p 80:80 -e DATABASE_URL=ecto://db_user:db_password@db_host/db -e SEC
 
 ### Docker compose
 
+At the moment there are two flavors of the image:
+
+- `latest`, `debian` running debian bullseye
+- `alpine` running alpine 3.16.2
+
+The main difference is the image size, around 70MB for debian, and around 15MB for the alpine based.
+
+
 ```yaml
 version: '3.8'
 services:
   tvhstats:
-    image: cr.jbonet.xyz/jbonet/tvhstats
+    image: cr.jbonet.xyz/jbonet/tvhstats:latest
     depends_on:
       - db
     environment:
@@ -46,9 +56,8 @@ services:
       # Optional parameters, these are the default values.
       - TVHSTATS_POLL_INTERVAL=1000 # optional
       - TVHSTATS_ICON_CACHE_ENABLED=1 # optional
-      - TVHSTATS_ICON_CACHE_FOLDER=/icons # optional
+      - TVHSTATS_ICON_CACHE_FOLDER=/app/icons # optional
       - TVHSTATS_CHANNEL_SURF_THRESHOLD=10000 # optional
-
     ports:
       - "80:80"
   
