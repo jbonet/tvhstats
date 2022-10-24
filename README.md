@@ -46,7 +46,7 @@ services:
       - db
     environment:
       - DATABASE_URL=ecto://postgres:postgres@db/tvhstats
-      - TVHSTATS_TVHEADEND_HOST=example.com
+      - TVHSTATS_TVHEADEND_HOST=tvheadend_ip_or_hostname
       - TVHSTATS_TVHEADEND_PORT=443
       - TVHSTATS_TVHEADEND_USE_HTTPS=1
       - TVHSTATS_TVHEADEND_USER=tvheadend_user
@@ -58,6 +58,7 @@ services:
       - TVHSTATS_ICON_CACHE_ENABLED=1 # optional
       - TVHSTATS_ICON_CACHE_FOLDER=/app/icons # optional
       - TVHSTATS_CHANNEL_SURF_THRESHOLD=10000 # optional
+      - TVHSTATS_TIMEZONE=Etc/UTC
     ports:
       - "80:80"
   

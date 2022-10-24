@@ -37,7 +37,7 @@ defmodule TVHStats.Components do
       |> List.first()
       |> Map.get("channel")
 
-    "/assets/icons/#{encode_uri(channel)}.png"
+    "/icons/#{encode_uri(channel)}.png"
   end
 
   def get_user_initial([]), do: ""
