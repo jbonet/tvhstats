@@ -64,9 +64,21 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "localhost"
   port = 80
+  allowed_origins =
+    System.get_env("PHX_ALLOWED_HOSTS") ||
+      raise """
+      environment variable PHX_ALLOWED_HOSTS is missing.
+      For example: localhost:8080
+      """
+
+  allowed_origins =
+    allowed_origins
+    |> String.split(",")
+    |> Enum.map(& "//#{String.strip(&1)}")
 
   config :tvhstats, TVHStatsWeb.Endpoint,
-    url: [host: host, port: 80, scheme: "http"],
+    url: [host: host, port: port, scheme: "http"],
+    check_origin: allowed_origins,
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.

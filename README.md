@@ -46,7 +46,8 @@ services:
       - db
     environment:
       - DATABASE_URL=ecto://postgres:postgres@db/tvhstats
-      - PHX_HOST=ip_or_hostname # the ip or hostname from where you will access the app ie: tvstats.local, 192.168.1.100:8080
+      - PHX_HOST=ip_or_hostname # the ip or hostname from where you will access the app ie: tvstats.local, 192.168.1.100
+      - PHX_ALLOWED_HOSTS=192.168.1.100:8080,example.com # comma separated list of allowed hosts, must include port if different from 443 or 80
       - TVHSTATS_TVHEADEND_HOST=tvheadend_ip_or_hostname
       - TVHSTATS_TVHEADEND_PORT=443
       - TVHSTATS_TVHEADEND_USE_HTTPS=1
