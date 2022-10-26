@@ -46,6 +46,7 @@ services:
       - db
     environment:
       - DATABASE_URL=ecto://postgres:postgres@db/tvhstats
+      - PHX_HOST=ip_or_hostname # the ip or hostname from where you will access the app ie: tvstats.local, 192.168.1.100:8080
       - TVHSTATS_TVHEADEND_HOST=tvheadend_ip_or_hostname
       - TVHSTATS_TVHEADEND_PORT=443
       - TVHSTATS_TVHEADEND_USE_HTTPS=1
@@ -57,7 +58,7 @@ services:
       - TVHSTATS_POLL_INTERVAL=1000 # optional
       - TVHSTATS_ICON_CACHE_ENABLED=1 # optional
       - TVHSTATS_CHANNEL_SURF_THRESHOLD=10000 # optional
-      - TVHSTATS_TIMEZONE=Etc/UTC
+      - TVHSTATS_TIMEZONE=Etc/UTC # Pass an IANA timezone. ie: Europe/Madrid, America/Los_Angeles
     ports:
       - "80:80"
   
