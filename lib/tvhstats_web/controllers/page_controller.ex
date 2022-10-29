@@ -22,12 +22,17 @@ defmodule TVHStatsWeb.PageController do
       |> assign(:page_size, size)
       |> assign(:next_page, page + 1)
       |> assign(:prev_page, page - 1)
+      |> assign(:show_next_page, show_next_page?(page + 1, subscription_count, size))
       |> assign(:total_items, subscription_count)
       |> render("history.html")
     else
       {:error, errors} ->
         Plug.Conn.send_resp(conn, 400, Jason.encode!(errors))
     end
+  end
+
+  defp show_next_page?(next_page, total_items, page_size) do
+    next_page <= Float.ceil(total_items / page_size)
   end
 
   defp parse_subscription(subscription, timezone) do
