@@ -7,6 +7,7 @@ defmodule TVHStats.API.Client do
 
   alias TVHStats.Subscriptions.Utils, as: SubscriptionUtils
 
+  @invalid_clients ["epggrab", "scan"]
   @page_size 100
 
   def get_streams() do
@@ -56,7 +57,7 @@ defmodule TVHStats.API.Client do
     end
   end
 
-  defp parse_subscription(%{"title" => "epggrab"}), do: nil
+  defp parse_subscription(%{"title" => client}) when client in @invalid_clients, do: nil
   defp parse_subscription(subscription) do
     hash = SubscriptionUtils.generate_hash(subscription)
 
