@@ -17,14 +17,17 @@ defmodule TVHStats.API.Client do
 
     case res do
       {:ok, response} ->
-        %{"entries" => subscriptions, "totalCount" => count} = response
+        %{"entries" => subscriptions, "totalCount" => _count} = response
+
+        subscriptions =
+          subscriptions
+          |> Enum.map(&parse_subscription(&1))
+          |> Enum.reject(&is_nil/1)
+          |> Enum.sort_by(& &1["start"])
 
         %{
-          "entries" =>
-            subscriptions
-            |> Enum.map(&parse_subscription(&1))
-            |> Enum.sort_by(& &1["start"]),
-          "totalCount" => count
+          "entries" => subscriptions,
+          "totalCount" => length(subscriptions)
         }
 
       {:error, _reason} ->
@@ -53,6 +56,7 @@ defmodule TVHStats.API.Client do
     end
   end
 
+  defp parse_subscription(%{"title" => "epggrab"}), do: nil
   defp parse_subscription(subscription) do
     hash = SubscriptionUtils.generate_hash(subscription)
 
