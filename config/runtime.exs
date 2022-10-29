@@ -74,7 +74,7 @@ if config_env() == :prod do
   allowed_origins =
     allowed_origins
     |> String.split(",")
-    |> Enum.map(& "//#{String.strip(&1)}")
+    |> Enum.map(& "//#{String.trim(&1)}")
 
   config :tvhstats, TVHStatsWeb.Endpoint,
     url: [host: host, port: port, scheme: "http"],

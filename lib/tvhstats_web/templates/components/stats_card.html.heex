@@ -11,11 +11,9 @@
     <span>No data to display...</span>
     <% [_|_] -> %>
     <div class="flex items-center w-1/4" style="margin-top: -2rem;">
-        <%= case @mode do %>
+      <%= case @mode do %>
       <% "channel" -> %>
-        <object class="object-contain w-24 h-24" data={get_icon(@value)} type="image/png">
-          <img class="object-contain w-24 h-24" alt="Missing icon" src={"/images/missing.png"} />
-        </object>
+        <img class="object-contain w-24 h-24" alt={get_channel(@value)} src={get_icon(@value)} />
       <% "user" -> %>
         <div class="flex border border-2 w-16 h-16 align-middle rounded-full bg-green-500 items-center justify-center text-xl">
           <span class="inline-block m-0 p-0 align-[4px]"><%= get_user_initial(@value) %></span>

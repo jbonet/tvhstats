@@ -48,4 +48,8 @@ defmodule TVHStats.Components do
     |> Map.get("user")
     |> String.first()
   end
+
+  def get_channel(value) do
+    value[:channel]
+  end
 end
