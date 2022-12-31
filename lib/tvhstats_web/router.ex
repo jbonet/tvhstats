@@ -20,6 +20,7 @@ defmodule TVHStatsWeb.Router do
     live "/", HomeLive.Home, :index
     get "/history", PageController, :history
     get "/icons/:path", IconsController, :get_icon
+    get "/graphs", PageController, :get_graphs
   end
 
   # Other scopes may use custom stacks.

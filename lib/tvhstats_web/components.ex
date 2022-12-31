@@ -31,25 +31,23 @@ defmodule TVHStats.Components do
 
   def get_icon([]), do: ""
 
-  def get_icon(values) do
+  def get_icon([head | _]) do
     channel =
-      values
-      |> List.first()
+      head
       |> Map.get("channel")
+      |> encode_uri()
 
-    "/icons/#{encode_uri(channel)}.png"
+    "/icons/#{channel}.png"
   end
 
   def get_user_initial([]), do: ""
 
-  def get_user_initial(values) do
-    values
-    |> List.first()
+  def get_user_initial([head | _]) do
+    head
     |> Map.get("user")
     |> String.first()
   end
 
-  def get_channel(value) do
-    value[:channel]
-  end
+  def get_channel(%{channel: channel}), do: channel
+  def get_channel(_), do: "N/A"
 end

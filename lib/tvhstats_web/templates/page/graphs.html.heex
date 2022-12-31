@@ -1,0 +1,60 @@
+<h3 class="py-4 text-white">Graphs</h3>
+<div class="overflow-x-auto bg-gray-900 relative rounded-lg w-full p-4">
+  <span class="text-white">Daily play count</span>
+  <div class="w-full h-48 max-h-48">
+    <canvas id="lineChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.1.1/dist/chart.umd.min.js"></script>
+<script type="text/javascript">
+  var chart_data = <%= raw(Jason.encode!(fetch_chart_data @play_count)) %>
+  var chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @play_count)) %>
+
+  //A Canvas dom element with ID "lineChart" is where our chart will display
+  var ctx = document.getElementById("lineChart").getContext("2d");
+
+  var myChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      //we make sure of the following variable to available in the template that uses this JS file and it act as X-Axis
+      labels: chart_labels,
+      datasets: [
+        {
+          label: "Plays",
+
+          // Adjust the colors and Background here if you need
+          backgroundColor: "rgba(155, 89, 182,0.2)",
+          borderColor: "rgba(142, 68, 173,1.0)",
+          pointBackgroundColor: "rgba(142, 68, 173,1.0)",
+
+          //we make sure of the following variable to available in the template that uses this JS
+          data: chart_data,
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+        scale: {
+        ticks: {
+          precision: 0
+        }
+      },
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+              precision: 0,
+            },
+          },
+        ],
+      },
+    },
+  });
+</script>
+
+
+<!--<script src='<%= Routes.static_path(@conn, "/js/linechart.js") %>' type="text/javascript">-->

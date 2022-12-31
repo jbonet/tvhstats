@@ -1,6 +1,8 @@
 defmodule TVHStatsWeb.PageController do
   use TVHStatsWeb, :controller
 
+  alias TVHStats.Utils
+
   @history_params_schema %{
     page: [type: :integer, default: 1, number: [min: 1]],
     size: [type: :integer, default: 20, in: [3, 20, 50, 100]]
@@ -29,6 +31,28 @@ defmodule TVHStatsWeb.PageController do
       {:error, errors} ->
         Plug.Conn.send_resp(conn, 400, Jason.encode!(errors))
     end
+  end
+
+  def get_graphs(conn, params) do
+    plays =
+      30
+      |> TVHStats.Subscriptions.get_daily_plays()
+      |> Enum.into(%{})
+
+    last_30_days =
+      0..29
+      |> Stream.map(&Utils.datetime_n_days_ago/1)
+      |> Stream.map(&Calendar.strftime(&1, "%d %b %Y"))
+      |> Enum.reduce(plays, fn
+        value, acc ->
+          Map.update(acc, value, 0, fn existing_value -> existing_value end)
+      end)
+
+    zipped = Enum.zip(Map.keys(last_30_days), Map.values(last_30_days))
+
+    conn
+    |> assign(:play_count, zipped)
+    |> render("graphs.html")
   end
 
   defp show_next_page?(next_page, total_items, page_size) do
@@ -60,4 +84,8 @@ defmodule TVHStatsWeb.PageController do
         )
     }
   end
+
+
+
+
 end

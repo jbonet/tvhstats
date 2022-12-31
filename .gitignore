@@ -38,3 +38,4 @@ npm-debug.log
 
 .env
 docker-compose.release.yml
+/icons/

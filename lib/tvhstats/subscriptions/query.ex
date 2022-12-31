@@ -92,6 +92,24 @@ defmodule TVHStats.Subscriptions.Query do
     )
   end
 
+  @doc "to_char function for formatting datetime as dd MON YYYY"
+  defmacro to_char(field, format) do
+    quote do
+      fragment("to_char(?, ?)", unquote(field), unquote(format))
+    end
+  end
+
+  def get_daily_activity(last_n_days) do
+    date = Utils.datetime_n_days_ago(last_n_days)
+
+    from(
+      s in Subscription,
+      select: {to_char(s.started_at, "dd Mon YYYY"), count(s.hash)},
+      where: s.started_at > ^date,
+      group_by: to_char(s.started_at, "dd Mon YYYY")
+    )
+  end
+
   defp add_field(q, :user) do
     select_merge(q, [s], %{"user" => s.user})
   end
