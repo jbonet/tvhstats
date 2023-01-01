@@ -7,13 +7,19 @@ An elixir based web application for monitoring and analytics for [tvheadend](htt
 - Monitor current activity in realtime
 - Top statistics for last 30 days.
 - Stream history
+- Graphs for last 30 days.
+
+### Screenshots
+
+#### Graphs
+
+![image](https://user-images.githubusercontent.com/17141983/210185591-8e299d02-90d8-4097-80b3-7206fcc0a5f4.png)
 
 ## Roadmap
 
 - Search and filter on history.
 - Selectable time range for statistics.
 - Show more statistics.
-- Graphs.
 - User and Channel list to show richer information, to show per user history and per channel activity.
 - Improve interface on mobile.
 
