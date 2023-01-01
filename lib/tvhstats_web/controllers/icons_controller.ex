@@ -8,7 +8,10 @@ defmodule TVHStatsWeb.IconsController do
     if File.exists?(icon_path) do
       send_download(conn, {:file, icon_path})
     else
-      send_download(conn, {:file, Application.app_dir(:tvhstats, "priv") <> "/static/images/missing.png"})
+      send_download(
+        conn,
+        {:file, Application.app_dir(:tvhstats, "priv") <> "/static/images/missing.png"}
+      )
     end
   end
 end

@@ -91,5 +91,4 @@ defmodule TVHStats.Subscriptions do
     |> SubscriptionQueries.get_daily_activity()
     |> Repo.all()
   end
-
 end

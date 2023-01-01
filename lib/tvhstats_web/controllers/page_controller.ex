@@ -33,7 +33,7 @@ defmodule TVHStatsWeb.PageController do
     end
   end
 
-  def get_graphs(conn, params) do
+  def get_graphs(conn, _params) do
     plays =
       30
       |> TVHStats.Subscriptions.get_daily_plays()
@@ -42,16 +42,16 @@ defmodule TVHStatsWeb.PageController do
     last_30_days =
       0..29
       |> Stream.map(&Utils.datetime_n_days_ago/1)
-      |> Stream.map(&Calendar.strftime(&1, "%d %b %Y"))
-      |> Enum.reduce(plays, fn
-        value, acc ->
-          Map.update(acc, value, 0, fn existing_value -> existing_value end)
+      |> Stream.map(fn date -> {date, Calendar.strftime(date, "%d %b %Y")} end)
+      |> Stream.map(fn
+        {date, date_str} ->
+          %{date: date, date_label: Calendar.strftime(date, "%b %d"), value: Map.get(plays, date_str, 0)}
       end)
-
-    zipped = Enum.zip(Map.keys(last_30_days), Map.values(last_30_days))
+      |> Enum.sort_by(&Map.get(&1, :date), {:asc, Date})
 
     conn
-    |> assign(:play_count, zipped)
+    |> assign(:page_title, "Graphs")
+    |> assign(:play_count, last_30_days)
     |> render("graphs.html")
   end
 
@@ -84,8 +84,4 @@ defmodule TVHStatsWeb.PageController do
         )
     }
   end
-
-
-
-
 end

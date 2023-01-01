@@ -50,7 +50,7 @@ defmodule TVHStats.Subscriptions.Query do
   end
 
   def get_play_count(field, last_n_days) do
-     date = Utils.datetime_n_days_ago(last_n_days)
+    date = Utils.datetime_n_days_ago(last_n_days)
 
     from(
       s in Subscription,
@@ -64,7 +64,7 @@ defmodule TVHStats.Subscriptions.Query do
   end
 
   def get_play_duration(field, last_n_days) do
-     date = Utils.datetime_n_days_ago(last_n_days)
+    date = Utils.datetime_n_days_ago(last_n_days)
 
     from(
       s in Subscription,

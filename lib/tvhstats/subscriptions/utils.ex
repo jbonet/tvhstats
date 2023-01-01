@@ -13,7 +13,4 @@ defmodule TVHStats.Subscriptions.Utils do
     |> :crypto.hash(:erlang.term_to_binary("#{id}_#{start}_#{client}"))
     |> Base.encode16()
   end
-
-
-
 end

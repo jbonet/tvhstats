@@ -58,6 +58,7 @@ defmodule TVHStats.API.Client do
   end
 
   defp parse_subscription(%{"title" => client}) when client in @invalid_clients, do: nil
+
   defp parse_subscription(subscription) do
     hash = SubscriptionUtils.generate_hash(subscription)
 
@@ -97,7 +98,10 @@ defmodule TVHStats.API.Client do
         {:error, :unknown_error}
 
       {:error, %Mint.TransportError{reason: reason}} ->
-        Logger.error("There was an error sending the request: #{reason}. Please check you set your server correctly.")
+        Logger.error(
+          "There was an error sending the request: #{reason}. Please check you set your server correctly."
+        )
+
         {:error, reason}
     end
   end

@@ -51,10 +51,14 @@ defmodule TVHStats.Worker.CacheWarmer do
   end
 
   defp store_in_cache(%{"icon" => "picon" <> _, "name" => channel}, _) do
-    Logger.warning("[CacheWarmer] Icon for channel #{channel} can not be downloaded. Picon protocol not supported yet.")
+    Logger.warning(
+      "[CacheWarmer] Icon for channel #{channel} can not be downloaded. Picon protocol not supported yet."
+    )
   end
 
   defp store_in_cache(%{"icon" => icon, "name" => channel}, _) do
-    Logger.warning("[CacheWarmer] Icon for channel #{channel} can not be downloaded. Unknown format for link: #{icon}")
+    Logger.warning(
+      "[CacheWarmer] Icon for channel #{channel} can not be downloaded. Unknown format for link: #{icon}"
+    )
   end
 end

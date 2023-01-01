@@ -64,6 +64,7 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "localhost"
   port = 80
+
   allowed_origins =
     System.get_env("PHX_ALLOWED_HOSTS") ||
       raise """
@@ -74,7 +75,7 @@ if config_env() == :prod do
   allowed_origins =
     allowed_origins
     |> String.split(",")
-    |> Enum.map(& "//#{String.trim(&1)}")
+    |> Enum.map(&"//#{String.trim(&1)}")
 
   config :tvhstats, TVHStatsWeb.Endpoint,
     url: [host: host, port: port, scheme: "http"],
