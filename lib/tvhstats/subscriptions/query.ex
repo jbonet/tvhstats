@@ -110,6 +110,29 @@ defmodule TVHStats.Subscriptions.Query do
     )
   end
 
+  def get_hourly_activity(last_n_days) do
+    date = Utils.datetime_n_days_ago(last_n_days)
+
+    from(
+      s in Subscription,
+      select: {(fragment("date_part('hour', ?)", s.started_at)), count(s.hash)},
+      where: s.started_at > ^date,
+      group_by: (fragment("date_part('hour', ?)", s.started_at))
+    )
+  end
+
+  def get_weekday_activity(last_n_days) do
+    date = Utils.datetime_n_days_ago(last_n_days)
+
+    from(
+      s in Subscription,
+      select: {(fragment("date_part('isodow', ?)", s.started_at)), count(s.hash)},
+      where: s.started_at > ^date,
+      group_by: (fragment("date_part('isodow', ?)", s.started_at))
+    )
+  end
+
+
   defp add_field(q, :user) do
     select_merge(q, [s], %{"user" => s.user})
   end

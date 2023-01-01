@@ -34,24 +34,12 @@ defmodule TVHStatsWeb.PageController do
   end
 
   def get_graphs(conn, _params) do
-    plays =
-      30
-      |> TVHStats.Subscriptions.get_daily_plays()
-      |> Enum.into(%{})
-
-    last_30_days =
-      0..29
-      |> Stream.map(&Utils.datetime_n_days_ago/1)
-      |> Stream.map(fn date -> {date, Calendar.strftime(date, "%d %b %Y")} end)
-      |> Stream.map(fn
-        {date, date_str} ->
-          %{date: date, date_label: Calendar.strftime(date, "%b %d"), value: Map.get(plays, date_str, 0)}
-      end)
-      |> Enum.sort_by(&Map.get(&1, :date), {:asc, Date})
 
     conn
     |> assign(:page_title, "Graphs")
-    |> assign(:play_count, last_30_days)
+    |> assign(:daily_play_count, get_daily_play_count())
+    |> assign(:hourly_play_count, get_hourly_play_count())
+    |> assign(:weekday_play_count, get_weekday_play_count())
     |> render("graphs.html")
   end
 
@@ -84,4 +72,48 @@ defmodule TVHStatsWeb.PageController do
         )
     }
   end
+
+  defp get_daily_play_count() do
+    plays =
+      30
+      |> TVHStats.Subscriptions.get_daily_plays()
+      |> Enum.into(%{})
+
+    0..29
+    |> Stream.map(&Utils.datetime_n_days_ago/1)
+    |> Stream.map(fn date -> {date, Calendar.strftime(date, "%d %b %Y")} end)
+    |> Stream.map(fn
+      {date, date_str} ->
+        %{date: date, label: Calendar.strftime(date, "%b %d"), value: Map.get(plays, date_str, 0)}
+    end)
+    |> Enum.sort_by(&Map.get(&1, :date), {:asc, Date})
+  end
+
+  defp get_hourly_play_count() do
+    plays =
+      30
+      |> TVHStats.Subscriptions.get_hourly_plays()
+      |> Enum.map(fn {hour, value}-> {trunc(hour), value} end)
+      |> Enum.into(%{})
+
+    Enum.map(0..23, fn hour -> %{label: String.pad_leading("#{hour}", 2, "0"), value: Map.get(plays, hour, 0)} end)
+  end
+
+  defp get_weekday_play_count() do
+    plays =
+      30
+      |> TVHStats.Subscriptions.get_weekday_plays()
+      |> Enum.map(fn {hour, value}-> {trunc(hour), value} end)
+      |> Enum.into(%{})
+
+    Enum.map(1..7, fn weekday -> %{label: get_dow(weekday), value: Map.get(plays, weekday, 0)} end)
+  end
+
+  defp get_dow(1), do: "Monday"
+  defp get_dow(2), do: "Tuesday"
+  defp get_dow(3), do: "Wednesday"
+  defp get_dow(4), do: "Thursday"
+  defp get_dow(5), do: "Friday"
+  defp get_dow(6), do: "Saturday"
+  defp get_dow(7), do: "Sunday"
 end

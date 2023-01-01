@@ -9,6 +9,6 @@ defmodule TVHStatsWeb.PageView do
   end
 
   def fetch_chart_labels(data) do
-    Enum.map(data, fn %{date_label: label} -> label end)
+    Enum.map(data, fn %{label: label} -> label end)
   end
 end

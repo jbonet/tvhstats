@@ -1,15 +1,31 @@
 <h3 class="py-4 text-white">Graphs</h3>
-<div class="overflow-x-auto bg-gray-900 relative rounded-lg w-full p-4">
-  <span class="text-white">Daily play count</span>
-  <div class="w-full h-48 max-h-48">
-    <canvas id="lineChart"></canvas>
+<div class="flex flex-col gap-4">
+  <div class="overflow-x-auto bg-gray-900 relative rounded-lg w-full p-4">
+    <span class="text-white">Daily play count</span>
+    <div class="w-full h-48 max-h-48">
+      <canvas id="lineChart"></canvas>
+    </div>
+  </div>
+
+  <div class="flex gap-4">
+     <div class="overflow-x-auto bg-gray-900 relative rounded-lg w-1/2 p-4">
+      <span class="text-white">Play count by day of the week</span>
+      <div class="w-full h-48 max-h-48">
+        <canvas id="weekdayPlaysChart"></canvas>
+      </div>
+    </div>
+    <div class="overflow-x-auto bg-gray-900 relative rounded-lg w-1/2 p-4">
+      <span class="text-white">Play count by hour of day (Shown in UTC)</span>
+      <div class="w-full h-48 max-h-48">
+        <canvas id="hourlyPlaysChart"></canvas>
+      </div>
+    </div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.1.1/dist/chart.umd.min.js"></script>
 <script type="text/javascript">
-  var chart_data = <%= raw(Jason.encode!(fetch_chart_data @play_count)) %>
-  var chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @play_count)) %>
+  var chart_data = <%= raw(Jason.encode!(fetch_chart_data @daily_play_count)) %>
+  var chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @daily_play_count)) %>
 
   //A Canvas dom element with ID "lineChart" is where our chart will display
   var ctx = document.getElementById("lineChart").getContext("2d");
@@ -41,20 +57,92 @@
           precision: 0
         }
       },
+    },
+  });
+</script>
+
+<script type="text/javascript">
+  var hourly_chart_data = <%= raw(Jason.encode!(fetch_chart_data @hourly_play_count)) %>
+  var hourly_chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @hourly_play_count)) %>
+
+  //A Canvas dom element with ID "lineChart" is where our chart will display
+  var hourly_ctx = document.getElementById("hourlyPlaysChart").getContext("2d");
+
+  var hourly_chart = new Chart(hourly_ctx, {
+    type: "bar",
+    data: {
+      //we make sure of the following variable to available in the template that uses this JS file and it act as X-Axis
+      labels: hourly_chart_labels,
+      datasets: [
+        {
+          label: "Plays",
+
+          // Adjust the colors and Background here if you need
+          backgroundColor: "rgba(155, 89, 182,0.2)",
+          borderColor: "rgba(142, 68, 173,1.0)",
+          pointBackgroundColor: "rgba(142, 68, 173,1.0)",
+          borderWidth: 2,
+          //we make sure of the following variable to available in the template that uses this JS
+          data: hourly_chart_data,
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+        scale: {
+        ticks: {
+          precision: 0
+        }
+      },
       scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              stepSize: 1,
-              precision: 0,
-            },
-          },
-        ],
+        y: {
+          beginAtZero: true
+        },
       },
     },
   });
 </script>
 
+<script type="text/javascript">
+  var weekday_chart_data = <%= raw(Jason.encode!(fetch_chart_data @weekday_play_count)) %>
+  var weekday_chart_labels = <%= raw(Jason.encode!(fetch_chart_labels @weekday_play_count)) %>
 
-<!--<script src='<%= Routes.static_path(@conn, "/js/linechart.js") %>' type="text/javascript">-->
+  //A Canvas dom element with ID "lineChart" is where our chart will display
+  var weekday_ctx = document.getElementById("weekdayPlaysChart").getContext("2d");
+
+  var weekday_chart = new Chart(weekday_ctx, {
+    type: "bar",
+    data: {
+      //we make sure of the following variable to available in the template that uses this JS file and it act as X-Axis
+      labels: weekday_chart_labels,
+      datasets: [
+        {
+          label: "Plays",
+
+          // Adjust the colors and Background here if you need
+          backgroundColor: "rgba(155, 89, 182,0.2)",
+          borderColor: "rgba(142, 68, 173,1.0)",
+          pointBackgroundColor: "rgba(142, 68, 173,1.0)",
+          borderWidth: 2,
+          //we make sure of the following variable to available in the template that uses this JS
+          data: weekday_chart_data,
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+        scale: {
+        ticks: {
+          precision: 0
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        },
+      },
+    },
+  });
+</script>

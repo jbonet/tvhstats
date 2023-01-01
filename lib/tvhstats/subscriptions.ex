@@ -91,4 +91,16 @@ defmodule TVHStats.Subscriptions do
     |> SubscriptionQueries.get_daily_activity()
     |> Repo.all()
   end
+
+  def get_hourly_plays(last_n_days) do
+    last_n_days
+    |> SubscriptionQueries.get_hourly_activity()
+    |> Repo.all()
+  end
+
+  def get_weekday_plays(last_n_days) do
+    last_n_days
+    |> SubscriptionQueries.get_weekday_activity()
+    |> Repo.all()
+  end
 end
