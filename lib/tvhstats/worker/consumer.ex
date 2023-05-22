@@ -130,7 +130,7 @@ defmodule TVHStats.Worker.Consumer do
          "channel" => channel,
          "stream_type" => stream_type,
          "client" => client
-       }) do
+        }) when stream_type in ["http", "htsp"] do
     %{
       hash: hash,
       user: user,
@@ -138,6 +138,25 @@ defmodule TVHStats.Worker.Consumer do
       ip: ip,
       started_at: DateTime.from_unix!(start),
       stream_type: stream_type,
+      client: client
+    }
+  end
+  
+  defp transform(%{
+     "hostname" => ip,
+     "start" => start,
+     "username" => user,
+     "hash" => hash,
+     "channel" => channel,
+     "client" => client
+   }) do
+    %{
+      hash: hash,
+      user: user,
+      channel: channel,
+      ip: ip,
+      started_at: DateTime.from_unix!(start),
+      stream_type: "htsp",
       client: client
     }
   end
