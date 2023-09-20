@@ -24,12 +24,12 @@ You must pass a SECRET_KEY_BASE environment variable of at least 64 characters l
 ### Docker
 
 ```bash
-docker run -p 80:80 -e DATABASE_URL=ecto://db_user:db_password@db_host/db -e SECRET_KEY_BASE=secret_string_REPLACE_ME cr.jbonet.xyz/jbonet/tvhstats
+docker run -p 80:80 -e DATABASE_URL=ecto://db_user:db_password@db_host/db -e SECRET_KEY_BASE=secret_string_REPLACE_ME jbonet4/tvhstats
 ```
 
 ### Docker compose
 
-At the moment there are two flavors of the image:
+At the moment there are two flavors of the image (amd64 only at the moment):
 
 - `latest`, `debian` running debian bullseye
 - `alpine` running alpine 3.16.2
