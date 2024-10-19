@@ -17,6 +17,9 @@ An elixir based web application for monitoring and analytics for [tvheadend](htt
 - User and Channel list to show richer information, to show per user history and per channel activity.
 - Improve interface on mobile.
 
+## Requirements
+Make sure that you have enabled "Plain" authentication in your Tvheadend setup (Configuration -> General -> Base -> HTTP Server Settings) or else your connection attempts will fail with "Unauthorized".
+
 ## Installation
 
 You must pass a SECRET_KEY_BASE environment variable of at least 64 characters long.
